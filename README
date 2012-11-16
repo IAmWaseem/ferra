@@ -1,3 +1,63 @@
 FeraKernel v5 ICS CM9
 15.11.2012
 by feravolt
+
+- Based on latest FXP sources
+- New Optimized Frequency table
+- CPU voltage optimization
+- Both GPU framebuffers forced to work
+- Airplane Mod bug fix
+- NEW KGSL drivers
+- KGSL Deepsleep fix
+- FPS Uncap fix
+- Deadline I/O shed optimization
+- SmartAssV2 Governor optimizatio
+- Reclaimed More free RAM from Loggers
+- FPS Uncap
+- CPU TumbEE extension
+- Module's loading optimizatio
+- DebugFS
+- EXT2,EXT3,EXT4,ext4dev support
+- Updated YAFFS2 to lates sony sources
+- Separate Audio Processing
+- VM Background caching optimizations
+- New LOGO
+- FeraDroid Engine V4 Integration
+- Camera permissions Fix
+- Wifi permissions Fix
+- Internal ReadAhead Cahce size bumped to 512kb
+- Swap Support
+- Removed Zram
+- Memory Leak fix
+- Video Drivers small fix
+- Potential SD mount bug fix
+- Dirty Ratio fix
+- System Services Fix
+- DRM compability fix
+- KGSL Dumps disabled
+- Removed Unneeded CPU governors
+- HID devices support
+- Blue LED + vibration for recovery
+- Recovery ADB support
+- MTD fix
+- LED permissions fix
+- Slow Bootup fix
+- Modules optimizations
+
+....more..will add later
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
