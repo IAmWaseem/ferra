@@ -1,30 +1,3 @@
-/*
-
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License version 2 as
-   published by the Free Software Foundation.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-   This program is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-   or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-   for more details.
-
-
-   Copyright (C) 2006-2007 - Motorola
-   Copyright (c) 2008-2009, Code Aurora Forum. All rights reserved.
-
-   Date         Author           Comment
-   -----------  --------------   --------------------------------
-   2006-Apr-28	Motorola	 The kernel module for running the Bluetooth(R)
-				 Sleep-Mode Protocol from the Host side
-   2006-Sep-08  Motorola         Added workqueue for handling sleep work.
-   2007-Jan-24  Motorola         Added mbm_handle_ioi() call to ISR.
-
-*/
 
 #include <linux/module.h>	/* kernel module definitions */
 #include <linux/errno.h>
@@ -271,6 +244,7 @@ static int bluesleep_hci_event(struct notifier_block *this,
 			hu  = (struct hci_uart *) hdev->driver_data;
 			state = (struct uart_state *) hu->tty->driver_data;
 			bsi->uport = state->port;
+				bluesleep_sleep_work(NULL);
 		}
 		break;
 	case HCI_DEV_UNREG:
