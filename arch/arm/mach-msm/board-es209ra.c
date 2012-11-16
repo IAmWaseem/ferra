@@ -88,7 +88,7 @@
 
 #define MSM_FB_BASE		0x02B00000
 #define MSM_FB_SIZE		0x00300000
-
+#define MSM_AUDIO_SIZE		0x80000
 #define MSM_GPU_PHYS_BASE 	0x03000000
 #define MSM_GPU_PHYS_SIZE 	0x00200000
 
@@ -781,11 +781,42 @@ static struct resource msm_audio_resources[] = {
 		.flags  = IORESOURCE_IO,
 	},
 	{
+		.name   = "sdac_din",
+		.start  = 144,
+		.end    = 144,
+		.flags  = IORESOURCE_IO,
+	},
+	{
+		.name   = "sdac_dout",
+		.start  = 145,
+		.end    = 145,
+		.flags  = IORESOURCE_IO,
+	},
+	{
+		.name   = "sdac_wsout",
+		.start  = 143,
+		.end    = 143,
+		.flags  = IORESOURCE_IO,
+	},
+	{
+		.name   = "cc_i2s_clk",
+		.start  = 142,
+		.end    = 142,
+		.flags  = IORESOURCE_IO,
+	},
+	{
+		.name   = "audio_master_clkout",
+		.start  = 146,
+		.end    = 146,
+		.flags  = IORESOURCE_IO,
+	},
+	{
 		.name	= "audio_base_addr",
 		.start	= 0xa0700000,
 		.end	= 0xa0700000 + 4,
 		.flags	= IORESOURCE_MEM,
 	},
+
 };
 
 static unsigned audio_gpio_on[] = {
@@ -793,6 +824,13 @@ static unsigned audio_gpio_on[] = {
 	GPIO_CFG(69, 1, GPIO_INPUT,  GPIO_NO_PULL, GPIO_2MA),	/* PCM_DIN */
 	GPIO_CFG(70, 2, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),	/* PCM_SYNC */
 	GPIO_CFG(71, 2, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),	/* PCM_CLK */
+#if 0
+	GPIO_CFG(142, 2, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA),	/* CC_I2S_CLK */
+	GPIO_CFG(143, 1, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA),	/* SADC_WSOUT */
+	GPIO_CFG(144, 1, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA),	/* SADC_DIN */
+	GPIO_CFG(145, 1, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA),	/* SDAC_DOUT */
+	GPIO_CFG(146, 2, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA),	/* MA_CLK_OUT */
+#endif 
 };
 
 static void __init audio_gpio_init(void)
@@ -1812,6 +1850,14 @@ static void __init pmem_adsp_size_setup(char **p)
 }
 __early_param("pmem_adsp_size=", pmem_adsp_size_setup);
 
+static unsigned audio_size = MSM_AUDIO_SIZE;
+static void __init audio_size_setup(char **p)
+{
+	audio_size = memparse(*p, p);
+}
+__early_param("audio_size=", audio_size_setup);
+
+
 /* SEMC:SYS: Get startup reason - start */
 unsigned int es209ra_startup_reason = 0;
 
@@ -1912,13 +1958,21 @@ static void __init es209ra_allocate_memory_regions(void)
 			"pmem arena\n", size, addr, __pa(addr));
 	}
 
+	size = audio_size ? : MSM_AUDIO_SIZE;
+	if (size) {
+	addr = alloc_bootmem(size);
+	msm_audio_resources[0].start = __pa(addr);
+	msm_audio_resources[0].end = msm_audio_resources[0].start + size - 1;
+	pr_info("allocating %lu bytes at %p (%lx physical) for audio\n",
+		size, addr, __pa(addr));
+	}
+
 	size = MSM_FB_SIZE;
 	addr = (void *)MSM_FB_BASE;
 	msm_fb_resources[0].start = (unsigned long)addr;
 	msm_fb_resources[0].end = msm_fb_resources[0].start + size - 1;
 	pr_info("using %lu bytes of SMI at %lx physical for fb\n",
 	       size, (unsigned long)addr);
-
 }
 
 static void __init es209ra_fixup(struct machine_desc *desc, struct tag *tags,
